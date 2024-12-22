@@ -1,11 +1,20 @@
 package main
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 func main() {
 	for {
 		inValConvert, cntConvert, outValConvert := getUserInput()
-		calculateConvert(inValConvert, cntConvert, outValConvert)
+		_, _, _, err := calculateConvert(inValConvert, cntConvert, outValConvert)
+		if err != nil {
+			fmt.Println(err.Error())
+			fmt.Println("Завершение работы приложения")
+			break
+		}
+
 		isRepeateCalculation := checkRepeatCalculation()
 		if !isRepeateCalculation {
 			break
@@ -17,10 +26,12 @@ func getUserInput() (string, float64, string) {
 	var inValConvert string
 	var outValConvert string
 	var cntConvert float64
-	fmt.Println("Какую валюту вы хотите обменять (rub/eur/usd)? ")
+
+	fmt.Println("Какую валюту вы хотите продать: rub, eur, usd? ")
 	fmt.Scan(&inValConvert)
-	fmt.Println("Укажите сумму обмена: ")
+	fmt.Println("Укажите сумму валюты для продажи: ")
 	fmt.Scan(&cntConvert)
+
 	switch {
 	case inValConvert == "rub":
 		fmt.Println("Укажите какую валюту вы хотите купить (eur/usd): ")
@@ -33,9 +44,10 @@ func getUserInput() (string, float64, string) {
 		fmt.Scan(&outValConvert)
 	}
 	return inValConvert, cntConvert, outValConvert
+
 }
 
-func calculateConvert(inValConvert string, cntConvert float64, outValConvert string) {
+func calculateConvert(inValConvert string, cntConvert float64, outValConvert string) (string, float64, string, error) {
 	const usdToEur = 0.94
 	const usdToRub = 100.0
 	const eurToRub = 110.0
@@ -60,6 +72,17 @@ func calculateConvert(inValConvert string, cntConvert float64, outValConvert str
 		resultConvert := cntConvert / eurToRub
 		fmt.Printf("Результат конвертации RUB в EUR: %.2f ", resultConvert)
 	}
+
+	if inValConvert != "rub" && inValConvert != "eur" && inValConvert != "usd" {
+		return "", 0, "", errors.New("Ошибка ввода валюты продажы!")
+	} else if cntConvert <= 0 {
+		return "", 0, "", errors.New("Ошибка ввода суммы валюты для продажи")
+	} else if outValConvert != "rub" && outValConvert != "eur" && outValConvert != "usd" {
+		return "", 0, "", errors.New("Ошибка ввода валюты покупки")
+	} else {
+		fmt.Println("Спасибо, что воспользовались услугами нашей комании!!!!")
+	}
+	return inValConvert, cntConvert, outValConvert, nil
 }
 
 func checkRepeatCalculation() bool {

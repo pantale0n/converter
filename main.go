@@ -3,9 +3,14 @@ package main
 import "fmt"
 
 func main() {
-
-	inValConvert, cntConvert, outValConvert := getUserInput()
-	calculateConvert(inValConvert, cntConvert, outValConvert)
+	for {
+		inValConvert, cntConvert, outValConvert := getUserInput()
+		calculateConvert(inValConvert, cntConvert, outValConvert)
+		isRepeateCalculation := checkRepeatCalculation()
+		if !isRepeateCalculation {
+			break
+		}
+	}
 }
 
 func getUserInput() (string, float64, string) {
@@ -55,4 +60,14 @@ func calculateConvert(inValConvert string, cntConvert float64, outValConvert str
 		resultConvert := cntConvert / eurToRub
 		fmt.Printf("Результат конвертации RUB в EUR: %.2f ", resultConvert)
 	}
+}
+
+func checkRepeatCalculation() bool {
+	var userChoice string
+	fmt.Println("Желаете продолжить (y/n): ")
+	fmt.Scan(&userChoice)
+	if userChoice == "y" {
+		return true
+	}
+	return false
 }
